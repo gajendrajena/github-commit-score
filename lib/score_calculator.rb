@@ -8,14 +8,14 @@ class ScoreCalculator
     "WatchEvent" => 3,
     "CreateEvent" => 2
   }
+  SCORE_MAP.default = 1
 
   def self.execute commits
     score = 0
     return score if commits.nil? || commits.empty?
     scores = commits.collect do|commit|
       if commit.id
-        puts "score: #{SCORE_MAP[commit.type] || 1}, id: #{commit.id}, type: #{commit.type}"
-        SCORE_MAP[commit.type] || 1
+        SCORE_MAP[commit.type]
       else
         0
       end
