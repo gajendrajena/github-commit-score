@@ -1,0 +1,3244 @@
+[
+  {
+    "id": "6130553247",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 8514,
+      "name": "rails/rails",
+      "url": "https://api.github.com/repos/rails/rails"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/rails/issues/29180",
+        "repository_url": "https://api.github.com/repos/rails/rails",
+        "labels_url": "https://api.github.com/repos/rails/rails/issues/29180/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/rails/issues/29180/comments",
+        "events_url": "https://api.github.com/repos/rails/rails/issues/29180/events",
+        "html_url": "https://github.com/rails/rails/pull/29180",
+        "id": 230349747,
+        "number": 29180,
+        "title": "ActiveSupport::CurrentAttributes provides a thread-isolated attributes singleton",
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 107194,
+            "url": "https://api.github.com/repos/rails/rails/labels/activesupport",
+            "name": "activesupport",
+            "color": "FC9300",
+            "default": false
+          }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": {
+          "url": "https://api.github.com/repos/rails/rails/milestones/56",
+          "html_url": "https://github.com/rails/rails/milestone/56",
+          "labels_url": "https://api.github.com/repos/rails/rails/milestones/56/labels",
+          "id": 2357255,
+          "number": 56,
+          "title": "5.2.0",
+          "description": "",
+          "creator": {
+            "login": "rafaelfranca",
+            "id": 47848,
+            "avatar_url": "https://avatars0.githubusercontent.com/u/47848?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/rafaelfranca",
+            "html_url": "https://github.com/rafaelfranca",
+            "followers_url": "https://api.github.com/users/rafaelfranca/followers",
+            "following_url": "https://api.github.com/users/rafaelfranca/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rafaelfranca/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/rafaelfranca/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rafaelfranca/subscriptions",
+            "organizations_url": "https://api.github.com/users/rafaelfranca/orgs",
+            "repos_url": "https://api.github.com/users/rafaelfranca/repos",
+            "events_url": "https://api.github.com/users/rafaelfranca/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/rafaelfranca/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "open_issues": 0,
+          "closed_issues": 4,
+          "state": "open",
+          "created_at": "2017-03-01T20:55:32Z",
+          "updated_at": "2017-06-20T21:56:00Z",
+          "due_on": null,
+          "closed_at": null
+        },
+        "comments": 20,
+        "created_at": "2017-05-22T10:20:40Z",
+        "updated_at": "2017-06-24T06:28:17Z",
+        "closed_at": "2017-05-26T18:00:27Z",
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/rails/pulls/29180",
+          "html_url": "https://github.com/rails/rails/pull/29180",
+          "diff_url": "https://github.com/rails/rails/pull/29180.diff",
+          "patch_url": "https://github.com/rails/rails/pull/29180.patch"
+        },
+        "body": "Abstract super class that provides a thread-isolated attributes singleton. \r\nPrimary use case is keeping all the per-request attributes easily available to the whole system.\r\n\r\nThe following full app-like example demonstrates how to use a Current class to\r\nfacilitate easy access to the global, per-request attributes without passing them deeply\r\naround everywhere:\r\n\r\n```ruby\r\n# app/models/current.rb\r\nclass Current < ActiveSupport::CurrentAttributes\r\n  attribute :account, :user\r\n  attribute :request_id, :user_agent, :ip_address \r\n  \r\n  resets { Time.zone = nil }\r\n  \r\n  def user=(user)\r\n    super\r\n    self.account = user.account\r\n    Time.zone = user.time_zone\r\n  end\r\nend\r\n\r\n# app/controllers/concerns/authentication.rb\r\nmodule Authentication\r\n  extend ActiveSupport::Concern\r\n\r\n  included do\r\n    before_action :set_current_authenticated_user\r\n  end\r\n\r\n  private\r\n    def set_current_authenticated_user\r\n      Current.user = User.find(cookies.signed[:user_id])\r\n    end\r\nend\r\n\r\n# app/controllers/concerns/set_current_request_details.rb\r\nmodule SetCurrentRequestDetails\r\n  extend ActiveSupport::Concern\r\n\r\n  included do\r\n    before_action do\r\n      Current.request_id = request.uuid\r\n      Current.user_agent = request.user_agent\r\n      Current.ip_address = request.ip\r\n    end\r\n  end\r\nend  \r\n\r\nclass ApplicationController < ActionController::Base\r\n  include Authentication\r\n  include SetCurrentRequestDetails\r\nend\r\n\r\nclass MessagesController < ApplicationController\r\n  def create\r\n    Current.account.messages.create(message_params)\r\n  end\r\nend\r\n\r\nclass Message < ApplicationRecord\r\n  belongs_to :creator, default: -> { Current.user }\r\n  after_create { |message| Event.create(record: message) }\r\nend\r\n\r\nclass Event < ApplicationRecord\r\n  before_create do\r\n    self.request_id = Current.request_id\r\n    self.user_agent = Current.user_agent\r\n    self.ip_address = Current.ip_address\r\n  end\r\nend\r\n```\r\n\r\nA word of caution: It's easy to overdo a global singleton like Current and tangle your model as a result.\r\nCurrent should only be used for a few, top-level globals, like account, user, and request details.\r\nThe attributes stuck in Current should be used by more or less all actions on all requests. If you start\r\nsticking controller-specific attributes in there, you're going to create a mess."
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/rails/issues/comments/310819277",
+        "html_url": "https://github.com/rails/rails/pull/29180#issuecomment-310819277",
+        "issue_url": "https://api.github.com/repos/rails/rails/issues/29180",
+        "id": 310819277,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-24T06:28:17Z",
+        "updated_at": "2017-06-24T06:28:17Z",
+        "body": "Rails has been embracing patterns that some people consider to be \"bad\" since inception, yet we are somehow still here and in better shape than ever. I'm going to go with yesterday's weather and predict that the inclusion of Current will not change that conclusion one iota either.\r\n\r\nAnyway, enjoy the rest of the menu!"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-24T06:28:19Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6115726857",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 8514,
+      "name": "rails/rails",
+      "url": "https://api.github.com/repos/rails/rails"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/rails/issues/29180",
+        "repository_url": "https://api.github.com/repos/rails/rails",
+        "labels_url": "https://api.github.com/repos/rails/rails/issues/29180/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/rails/issues/29180/comments",
+        "events_url": "https://api.github.com/repos/rails/rails/issues/29180/events",
+        "html_url": "https://github.com/rails/rails/pull/29180",
+        "id": 230349747,
+        "number": 29180,
+        "title": "ActiveSupport::CurrentAttributes provides a thread-isolated attributes singleton",
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+          {
+            "id": 107194,
+            "url": "https://api.github.com/repos/rails/rails/labels/activesupport",
+            "name": "activesupport",
+            "color": "FC9300",
+            "default": false
+          }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": {
+          "url": "https://api.github.com/repos/rails/rails/milestones/56",
+          "html_url": "https://github.com/rails/rails/milestone/56",
+          "labels_url": "https://api.github.com/repos/rails/rails/milestones/56/labels",
+          "id": 2357255,
+          "number": 56,
+          "title": "5.2.0",
+          "description": "",
+          "creator": {
+            "login": "rafaelfranca",
+            "id": 47848,
+            "avatar_url": "https://avatars0.githubusercontent.com/u/47848?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/rafaelfranca",
+            "html_url": "https://github.com/rafaelfranca",
+            "followers_url": "https://api.github.com/users/rafaelfranca/followers",
+            "following_url": "https://api.github.com/users/rafaelfranca/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rafaelfranca/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/rafaelfranca/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rafaelfranca/subscriptions",
+            "organizations_url": "https://api.github.com/users/rafaelfranca/orgs",
+            "repos_url": "https://api.github.com/users/rafaelfranca/repos",
+            "events_url": "https://api.github.com/users/rafaelfranca/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/rafaelfranca/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "open_issues": 0,
+          "closed_issues": 4,
+          "state": "open",
+          "created_at": "2017-03-01T20:55:32Z",
+          "updated_at": "2017-06-20T21:56:00Z",
+          "due_on": null,
+          "closed_at": null
+        },
+        "comments": 18,
+        "created_at": "2017-05-22T10:20:40Z",
+        "updated_at": "2017-06-22T07:19:07Z",
+        "closed_at": "2017-05-26T18:00:27Z",
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/rails/pulls/29180",
+          "html_url": "https://github.com/rails/rails/pull/29180",
+          "diff_url": "https://github.com/rails/rails/pull/29180.diff",
+          "patch_url": "https://github.com/rails/rails/pull/29180.patch"
+        },
+        "body": "Abstract super class that provides a thread-isolated attributes singleton. \r\nPrimary use case is keeping all the per-request attributes easily available to the whole system.\r\n\r\nThe following full app-like example demonstrates how to use a Current class to\r\nfacilitate easy access to the global, per-request attributes without passing them deeply\r\naround everywhere:\r\n\r\n```ruby\r\n# app/models/current.rb\r\nclass Current < ActiveSupport::CurrentAttributes\r\n  attribute :account, :user\r\n  attribute :request_id, :user_agent, :ip_address \r\n  \r\n  resets { Time.zone = nil }\r\n  \r\n  def user=(user)\r\n    super\r\n    self.account = user.account\r\n    Time.zone = user.time_zone\r\n  end\r\nend\r\n\r\n# app/controllers/concerns/authentication.rb\r\nmodule Authentication\r\n  extend ActiveSupport::Concern\r\n\r\n  included do\r\n    before_action :set_current_authenticated_user\r\n  end\r\n\r\n  private\r\n    def set_current_authenticated_user\r\n      Current.user = User.find(cookies.signed[:user_id])\r\n    end\r\nend\r\n\r\n# app/controllers/concerns/set_current_request_details.rb\r\nmodule SetCurrentRequestDetails\r\n  extend ActiveSupport::Concern\r\n\r\n  included do\r\n    before_action do\r\n      Current.request_id = request.uuid\r\n      Current.user_agent = request.user_agent\r\n      Current.ip_address = request.ip\r\n    end\r\n  end\r\nend  \r\n\r\nclass ApplicationController < ActionController::Base\r\n  include Authentication\r\n  include SetCurrentRequestDetails\r\nend\r\n\r\nclass MessagesController < ApplicationController\r\n  def create\r\n    Current.account.messages.create(message_params)\r\n  end\r\nend\r\n\r\nclass Message < ApplicationRecord\r\n  belongs_to :creator, default: -> { Current.user }\r\n  after_create { |message| Event.create(record: message) }\r\nend\r\n\r\nclass Event < ApplicationRecord\r\n  before_create do\r\n    self.request_id = Current.request_id\r\n    self.user_agent = Current.user_agent\r\n    self.ip_address = Current.ip_address\r\n  end\r\nend\r\n```\r\n\r\nA word of caution: It's easy to overdo a global singleton like Current and tangle your model as a result.\r\nCurrent should only be used for a few, top-level globals, like account, user, and request details.\r\nThe attributes stuck in Current should be used by more or less all actions on all requests. If you start\r\nsticking controller-specific attributes in there, you're going to create a mess."
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/rails/issues/comments/310297296",
+        "html_url": "https://github.com/rails/rails/pull/29180#issuecomment-310297296",
+        "issue_url": "https://api.github.com/repos/rails/rails/issues/29180",
+        "id": 310297296,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-22T07:19:06Z",
+        "updated_at": "2017-06-22T07:19:06Z",
+        "body": "A blog post is a great outlet to provide a different take on Current. Thanks for taking the time to write it up. \n\nI disagree with most of what's written, and found the \"DHH just did this! 😱\" pretty hilarious, but good to have a different take.\n\nThis pattern is used by Basecamp, GitHub, Shopify, and many others. It's not a new invention, but an extraction. Like almost all features in Rails.\n\nAnyway, as always, you're free to decline the unagi. We can enjoy the rest of the menu together.\n\n> On Jun 22, 2017, at 06:58, Ryan Bigg <notifications@github.com> wrote:\n> \n> I am very opposed to this feature but after what happened last time I opposed a change on Rails I am not willing to fight this fight.\n> \n> Instead, I have stated my case in a blog post: http://ryanbigg.com/2017/06/current-considered-harmful. I will not enter into any more discussion on this.\n> \n> —\n> You are receiving this because you modified the open/close state.\n> Reply to this email directly, view it on GitHub, or mute the thread.\n> \n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-22T07:19:09Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6111369126",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 75785147,
+      "name": "rails/webpacker",
+      "url": "https://api.github.com/repos/rails/webpacker"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/521",
+        "repository_url": "https://api.github.com/repos/rails/webpacker",
+        "labels_url": "https://api.github.com/repos/rails/webpacker/issues/521/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/webpacker/issues/521/comments",
+        "events_url": "https://api.github.com/repos/rails/webpacker/issues/521/events",
+        "html_url": "https://github.com/rails/webpacker/issues/521",
+        "id": 237129045,
+        "number": 521,
+        "title": "Webpack 3 support",
+        "user": {
+          "login": "lucascaton",
+          "id": 86755,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/86755?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/lucascaton",
+          "html_url": "https://github.com/lucascaton",
+          "followers_url": "https://api.github.com/users/lucascaton/followers",
+          "following_url": "https://api.github.com/users/lucascaton/following{/other_user}",
+          "gists_url": "https://api.github.com/users/lucascaton/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/lucascaton/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/lucascaton/subscriptions",
+          "organizations_url": "https://api.github.com/users/lucascaton/orgs",
+          "repos_url": "https://api.github.com/users/lucascaton/repos",
+          "events_url": "https://api.github.com/users/lucascaton/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/lucascaton/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2017-06-20T08:21:18Z",
+        "updated_at": "2017-06-21T16:52:53Z",
+        "closed_at": null,
+        "body": "https://medium.com/webpack/webpack-3-official-release-15fd2dd8f07b"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/comments/310139938",
+        "html_url": "https://github.com/rails/webpacker/issues/521#issuecomment-310139938",
+        "issue_url": "https://api.github.com/repos/rails/webpacker/issues/521",
+        "id": 310139938,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-21T16:52:53Z",
+        "updated_at": "2017-06-21T16:52:53Z",
+        "body": "I don't think we should tie Webpacker and Webpack together on the versioning side. Too hard to keep things in proper sync anyway. I think we should keep up with Webpack as far as possible and be on the latest stable version 👍"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-21T16:52:54Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6109558238",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 8514,
+      "name": "rails/rails",
+      "url": "https://api.github.com/repos/rails/rails"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/rails/issues/29455",
+        "repository_url": "https://api.github.com/repos/rails/rails",
+        "labels_url": "https://api.github.com/repos/rails/rails/issues/29455/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/rails/issues/29455/comments",
+        "events_url": "https://api.github.com/repos/rails/rails/issues/29455/events",
+        "html_url": "https://github.com/rails/rails/pull/29455",
+        "id": 236061642,
+        "number": 29455,
+        "title": "Remove FK together with column in MySQL",
+        "user": {
+          "login": "kirs",
+          "id": 522155,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/522155?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/kirs",
+          "html_url": "https://github.com/kirs",
+          "followers_url": "https://api.github.com/users/kirs/followers",
+          "following_url": "https://api.github.com/users/kirs/following{/other_user}",
+          "gists_url": "https://api.github.com/users/kirs/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/kirs/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/kirs/subscriptions",
+          "organizations_url": "https://api.github.com/users/kirs/orgs",
+          "repos_url": "https://api.github.com/users/kirs/repos",
+          "events_url": "https://api.github.com/users/kirs/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/kirs/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+          "login": "matthewd",
+          "id": 1034,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/1034?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/matthewd",
+          "html_url": "https://github.com/matthewd",
+          "followers_url": "https://api.github.com/users/matthewd/followers",
+          "following_url": "https://api.github.com/users/matthewd/following{/other_user}",
+          "gists_url": "https://api.github.com/users/matthewd/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/matthewd/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/matthewd/subscriptions",
+          "organizations_url": "https://api.github.com/users/matthewd/orgs",
+          "repos_url": "https://api.github.com/users/matthewd/repos",
+          "events_url": "https://api.github.com/users/matthewd/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/matthewd/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "matthewd",
+            "id": 1034,
+            "avatar_url": "https://avatars2.githubusercontent.com/u/1034?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/matthewd",
+            "html_url": "https://github.com/matthewd",
+            "followers_url": "https://api.github.com/users/matthewd/followers",
+            "following_url": "https://api.github.com/users/matthewd/following{/other_user}",
+            "gists_url": "https://api.github.com/users/matthewd/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/matthewd/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/matthewd/subscriptions",
+            "organizations_url": "https://api.github.com/users/matthewd/orgs",
+            "repos_url": "https://api.github.com/users/matthewd/repos",
+            "events_url": "https://api.github.com/users/matthewd/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/matthewd/received_events",
+            "type": "User",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 4,
+        "created_at": "2017-06-15T02:41:40Z",
+        "updated_at": "2017-06-21T13:21:29Z",
+        "closed_at": "2017-06-17T01:54:27Z",
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/rails/pulls/29455",
+          "html_url": "https://github.com/rails/rails/pull/29455",
+          "diff_url": "https://github.com/rails/rails/pull/29455.diff",
+          "patch_url": "https://github.com/rails/rails/pull/29455.patch"
+        },
+        "body": "This is a successor of https://github.com/rails/rails/pull/29391\r\n\r\nUnlike other databases, MySQL doesn't let you remove the column if there's a FK on it.\r\nFor better developer experience we should remove the FK together with the column when migration runs `remove_column`.\r\n\r\n@dhh"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/rails/issues/comments/310076314",
+        "html_url": "https://github.com/rails/rails/pull/29455#issuecomment-310076314",
+        "issue_url": "https://api.github.com/repos/rails/rails/issues/29455",
+        "id": 310076314,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-21T13:21:29Z",
+        "updated_at": "2017-06-21T13:21:29Z",
+        "body": "Awesome. Thanks a lot!\r\n\r\nJust doing the right thing is the way to go for Ruby. Enough environments that enjoy pedantically scorning users."
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-21T13:21:33Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6063087610",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 75785147,
+      "name": "rails/webpacker",
+      "url": "https://api.github.com/repos/rails/webpacker"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/464",
+        "repository_url": "https://api.github.com/repos/rails/webpacker",
+        "labels_url": "https://api.github.com/repos/rails/webpacker/issues/464/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/webpacker/issues/464/comments",
+        "events_url": "https://api.github.com/repos/rails/webpacker/issues/464/events",
+        "html_url": "https://github.com/rails/webpacker/issues/464",
+        "id": 233268949,
+        "number": 464,
+        "title": "Proposal to merge in changes from Webpacker Lite.",
+        "user": {
+          "login": "justin808",
+          "id": 1118459,
+          "avatar_url": "https://avatars1.githubusercontent.com/u/1118459?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/justin808",
+          "html_url": "https://github.com/justin808",
+          "followers_url": "https://api.github.com/users/justin808/followers",
+          "following_url": "https://api.github.com/users/justin808/following{/other_user}",
+          "gists_url": "https://api.github.com/users/justin808/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/justin808/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/justin808/subscriptions",
+          "organizations_url": "https://api.github.com/users/justin808/orgs",
+          "repos_url": "https://api.github.com/users/justin808/repos",
+          "events_url": "https://api.github.com/users/justin808/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/justin808/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 16,
+        "created_at": "2017-06-02T18:51:50Z",
+        "updated_at": "2017-06-14T11:06:04Z",
+        "closed_at": null,
+        "body": "Following up from #453 and my discussion with @gauravtiwari, and my article [Webpacker Lite: Why Fork Webpacker?](https://blog.shakacode.com/webpacker-lite-why-fork-webpacker-f0a7707fac92) and my fork [Webpacker Lite](https://github.com/shakacode/webpacker_lite).\r\n\r\nI'd like to get some consensus on merging in the differences of Webpacker Lite before doing any work on a PR.\r\n\r\n# YML file and LIVE \r\n\r\n**Webpacker**, from [installer file](https://github.com/rails/webpacker/blob/master/lib/install/config/webpacker.yml):\r\n\r\n```yaml\r\ndevelopment:\r\n   public_output_path: packs\r\n   dev_server:\r\n     host: 0.0.0.0\r\n     port: 8080\r\n     https: false\r\n```\r\n\r\n**Webpacker Lite**, from [README](https://github.com/shakacode/webpacker_lite/blob/master/README.md):\r\n```yaml\r\ndevelopment:\r\n  <<: *default\r\n  # generated files for development, in /public/webpack/development\r\n  webpack_public_output_dir: webpack/development\r\n  \r\n  # Default is localhost:3500. You can specify the protocol if needed. Defaults to http://.\r\n  hot_reloading_host: localhost:3500\r\n  \r\n  # Developer note: considering removing this option so it can ONLY be turned by using an ENV value.\r\n  # Default is false, ENV 'HOT_RELOADING' will always override \r\n  hot_reloading_enabled_by_default: false\r\n```\r\n\r\n1. Should we use host vs individual keys and nested (note, `host` should have been `hostname` in webpacker).\r\n2. We need an option regarding whether or not using the webpack-dev-server should be the default, so this can be overridden with an env value, like `HOT_RELOADING`\r\n3. I'm fine with `public_output_path` rather than `webpack_public_output_dir` so long as this is the full path within the public directory where the generated files go, minus the `/public` part.\r\n\r\n# Helper differences\r\n1. Putting minimal in the manifest.json, not putting in the port, host, etc. and putting this logic in the [Ruby helper](https://github.com/shakacode/webpacker_lite/blob/master/lib/webpacker_lite/helper.rb#L62). This minimizes the requirement on a custom Webpack config to the bare minimum mapping of bundle names to file names.\r\n2. [stylesheet_pack_tag uses the hot reload (webpack-dev-server)](https://github.com/shakacode/webpacker_lite/blob/master/lib/webpacker_lite/helper.rb#L56) to decide if CSS should be included because you can't hot reload extracted CSS.\r\n3. [Using the mtime in the FileLoader](https://github.com/shakacode/webpacker_lite/blob/master/lib/webpacker_lite/file_loader.rb#L12) to account for the chance of using hash in file names for static files, both dev and test env, and the need to get the latest files.\r\n\r\n"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/comments/308398915",
+        "html_url": "https://github.com/rails/webpacker/issues/464#issuecomment-308398915",
+        "issue_url": "https://api.github.com/repos/rails/webpacker/issues/464",
+        "id": 308398915,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-14T11:06:04Z",
+        "updated_at": "2017-06-14T11:06:04Z",
+        "body": "Yes. We use ENV references in database.yml as well. Let's stick with that. \n\n> On Jun 14, 2017, at 02:40, Nick Smith <notifications@github.com> wrote:\n> \n> On more thought with regard to the last comment about ENV variables, I think you can reference the ENV variables in the YML files if the system parsing the files passes the file thru ERB. I would have to check Webpack source but it seems like it should be doing it that way. Maybe that is a good compromise?\n> \n> —\n> You are receiving this because you were mentioned.\n> Reply to this email directly, view it on GitHub, or mute the thread.\n> \n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-14T11:06:04Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6055238350",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 8514,
+      "name": "rails/rails",
+      "url": "https://api.github.com/repos/rails/rails"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/rails/issues/29391",
+        "repository_url": "https://api.github.com/repos/rails/rails",
+        "labels_url": "https://api.github.com/repos/rails/rails/issues/29391/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/rails/issues/29391/comments",
+        "events_url": "https://api.github.com/repos/rails/rails/issues/29391/events",
+        "html_url": "https://github.com/rails/rails/pull/29391",
+        "id": 234643062,
+        "number": 29391,
+        "title": "Don’t let to use remove_column for a FK column",
+        "user": {
+          "login": "kirs",
+          "id": 522155,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/522155?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/kirs",
+          "html_url": "https://github.com/kirs",
+          "followers_url": "https://api.github.com/users/kirs/followers",
+          "following_url": "https://api.github.com/users/kirs/following{/other_user}",
+          "gists_url": "https://api.github.com/users/kirs/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/kirs/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/kirs/subscriptions",
+          "organizations_url": "https://api.github.com/users/kirs/orgs",
+          "repos_url": "https://api.github.com/users/kirs/repos",
+          "events_url": "https://api.github.com/users/kirs/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/kirs/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": {
+          "login": "rafaelfranca",
+          "id": 47848,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/47848?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/rafaelfranca",
+          "html_url": "https://github.com/rafaelfranca",
+          "followers_url": "https://api.github.com/users/rafaelfranca/followers",
+          "following_url": "https://api.github.com/users/rafaelfranca/following{/other_user}",
+          "gists_url": "https://api.github.com/users/rafaelfranca/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/rafaelfranca/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/rafaelfranca/subscriptions",
+          "organizations_url": "https://api.github.com/users/rafaelfranca/orgs",
+          "repos_url": "https://api.github.com/users/rafaelfranca/repos",
+          "events_url": "https://api.github.com/users/rafaelfranca/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/rafaelfranca/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "assignees": [
+          {
+            "login": "rafaelfranca",
+            "id": 47848,
+            "avatar_url": "https://avatars0.githubusercontent.com/u/47848?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/rafaelfranca",
+            "html_url": "https://github.com/rafaelfranca",
+            "followers_url": "https://api.github.com/users/rafaelfranca/followers",
+            "following_url": "https://api.github.com/users/rafaelfranca/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rafaelfranca/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/rafaelfranca/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rafaelfranca/subscriptions",
+            "organizations_url": "https://api.github.com/users/rafaelfranca/orgs",
+            "repos_url": "https://api.github.com/users/rafaelfranca/repos",
+            "events_url": "https://api.github.com/users/rafaelfranca/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/rafaelfranca/received_events",
+            "type": "User",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "comments": 5,
+        "created_at": "2017-06-08T20:14:16Z",
+        "updated_at": "2017-06-13T13:06:16Z",
+        "closed_at": null,
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/rails/pulls/29391",
+          "html_url": "https://github.com/rails/rails/pull/29391",
+          "diff_url": "https://github.com/rails/rails/pull/29391.diff",
+          "patch_url": "https://github.com/rails/rails/pull/29391.patch"
+        },
+        "body": "As mentioned by @dhh in the Campfire:\r\n\r\n> I'm thinking that remove_column should catch the exceptions and explain that you should use remove_reference. And remove_reference should do the work of removing the FK as well.\r\n\r\nI agree that instead of crashing with `Mysql2::Error` we should explain developers that to remove a FK column they should use `remove_reference`."
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/rails/issues/comments/308109290",
+        "html_url": "https://github.com/rails/rails/pull/29391#issuecomment-308109290",
+        "issue_url": "https://api.github.com/repos/rails/rails/issues/29391",
+        "id": 308109290,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-13T13:06:16Z",
+        "updated_at": "2017-06-13T13:06:16Z",
+        "body": "I'd prefer if we just do the right thing. Especially if PG already works\nlike that.\n\nOn Fri, Jun 9, 2017 at 1:45 AM, Kir Shatrov <notifications@github.com>\nwrote:\n\n> If we are doing a check now and raising an exception why we don't do the\n> right thing instead of telling the developer to do?\n>\n> I don't feel too strongly, but personally I'd prefer to make the framework\n> not do it automatically and suggest using the right method to remove the\n> reference.\n>\n> Is this error a MySQLism?\n>\n> Looks like it is. It Just Works on postgres:\n>\n> require 'bundler/setup'require 'active_record'\n> ENV['RAILS_ENV'] = 'development'ENV['DATABASE_URL'] = 'postgresql://kir@localhost/another_demo'ActiveRecord::Tasks::DatabaseTasks.create_all\n> ActiveRecord::Base.logger = Logger.new($stdout)\n> ActiveRecord::Schema.define do\n>   create_table \"users\", force: true do |t|\n>     t.string \"name\"\n>   end\n>   create_table \"products\", force: true do |t|\n>     t.string \"title\"\n>     t.references \"user\", index: false, foreign_key: true\n>   end\n>\n>   remove_column :products, :user_id # works fine on postgres, blows up on mysqlend\n>\n> I see the point that my PR introduces inconsistent behaviour between MySQL\n> and other datastores.\n>\n> The original problem why the PR was opened is that on MySQL, when trying\n> to remove_column with a FK it crashes with quite unfriendly Mysql2::Error\n> message. The PR intends to improve the developer experience.\n>\n> The ways to fix it that I see are:\n>\n>    1. rescue Mysql2::Error and re-raise with another error suggesting to\n>    use remove_reference\n>    2. leave the PR as it is and move the check to AbstractMysqlAdapter\n>    3. magically cleanup the FK from AbstractMysqlAdapter#remove_column\n>\n> WDYT?\n>\n> —\n> You are receiving this because you were mentioned.\n> Reply to this email directly, view it on GitHub\n> <https://github.com/rails/rails/pull/29391#issuecomment-307257202>, or mute\n> the thread\n> <https://github.com/notifications/unsubscribe-auth/AAAKtfKJdWrTbYcOpcWzrdap4BeTe5xfks5sCIe2gaJpZM4N0kQz>\n> .\n>\n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-13T13:06:19Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6012102576",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 75785147,
+      "name": "rails/webpacker",
+      "url": "https://api.github.com/repos/rails/webpacker"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/475",
+        "repository_url": "https://api.github.com/repos/rails/webpacker",
+        "labels_url": "https://api.github.com/repos/rails/webpacker/issues/475/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/webpacker/issues/475/comments",
+        "events_url": "https://api.github.com/repos/rails/webpacker/issues/475/events",
+        "html_url": "https://github.com/rails/webpacker/pull/475",
+        "id": 233728961,
+        "number": 475,
+        "title": "Loosen up yarn and support npm",
+        "user": {
+          "login": "gauravtiwari",
+          "id": 771039,
+          "avatar_url": "https://avatars1.githubusercontent.com/u/771039?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/gauravtiwari",
+          "html_url": "https://github.com/gauravtiwari",
+          "followers_url": "https://api.github.com/users/gauravtiwari/followers",
+          "following_url": "https://api.github.com/users/gauravtiwari/following{/other_user}",
+          "gists_url": "https://api.github.com/users/gauravtiwari/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/gauravtiwari/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/gauravtiwari/subscriptions",
+          "organizations_url": "https://api.github.com/users/gauravtiwari/orgs",
+          "repos_url": "https://api.github.com/users/gauravtiwari/repos",
+          "events_url": "https://api.github.com/users/gauravtiwari/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/gauravtiwari/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 8,
+        "created_at": "2017-06-05T22:28:24Z",
+        "updated_at": "2017-06-06T16:30:34Z",
+        "closed_at": null,
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/webpacker/pulls/475",
+          "html_url": "https://github.com/rails/webpacker/pull/475",
+          "diff_url": "https://github.com/rails/webpacker/pull/475.diff",
+          "patch_url": "https://github.com/rails/webpacker/pull/475.patch"
+        },
+        "body": "Fixes - https://github.com/rails/webpacker/issues/452 and https://github.com/rails/webpacker/issues/405 \r\n\r\n## Adds\r\n\r\n* Detects node package managers in order - `yarn, npm` and finally fails with an error message if none found instead of just depending on Yarn\r\n\r\n## Removes\r\n\r\n* Extra yarn:install task - I feel we leave this to user like `bundle install` - Heroku already takes cares of this if we are using `webpacker` or node buildpack.  \r\n* Loosen up yarn usage inside binstubs \r\n\r\nFeel free to point out any platform specific (particularly windows) thing that needs fixing here 👍 \r\n"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/webpacker/issues/comments/306542347",
+        "html_url": "https://github.com/rails/webpacker/pull/475#issuecomment-306542347",
+        "issue_url": "https://api.github.com/repos/rails/webpacker/issues/475",
+        "id": 306542347,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-06T16:30:33Z",
+        "updated_at": "2017-06-06T16:30:33Z",
+        "body": "Let's take a step back here. The reason we went with Yarn in the first\nplace was pretty much exclusively that it provided a deterministic install\nvia the lock file. Now that npm 5 provides the same functionality, I don't\nthink we actually need Yarn any more. And I don't feel like Rails needs to\nbend over backwards to provide both. Maybe there's some transition period,\nand that's fine, but ultimately, Rails should just pick the best default\nchoice and go with that. From my limited read on the situation, it seems\nlike npm 5 is ultimately going to be that choice, but interested in hearing\ndissenting opinions on that.\n\nOn Tue, Jun 6, 2017 at 4:38 PM, Javan Makhmali <notifications@github.com>\nwrote:\n\n> Big +1 for supporting npm in addition to yarn, but I think that\n> attempting to do so automatically is going too far. As already seen from\n> the comments, there are numerous versions and varying command arguments to\n> consider.\n>\n> What do you think of making the package manager configurable in\n> webpacker.yml? It could default to using yarn, and people can adjust as\n> needed. Something like:\n>\n> # webpacker.ymldefault: &default\n>   package_manager: yarn\n>   package_add_args: add\n>   package_install_args: install\n>\n> —\n> You are receiving this because your review was requested.\n> Reply to this email directly, view it on GitHub\n> <https://github.com/rails/webpacker/pull/475#issuecomment-306506661>, or mute\n> the thread\n> <https://github.com/notifications/unsubscribe-auth/AAAKte_mnUSZX0GfpP3RjJAhC7KyyoHlks5sBWRZgaJpZM4NwpMt>\n> .\n>\n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-06T16:30:34Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001833210",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/399/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/399/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/399/events",
+        "html_url": "https://github.com/rails/jbuilder/issues/399",
+        "id": 232984154,
+        "number": 399,
+        "title": "Readme recommends broken version of jbuilder_cache_multi gem",
+        "user": {
+          "login": "markwpiper",
+          "id": 119986,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/119986?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/markwpiper",
+          "html_url": "https://github.com/markwpiper",
+          "followers_url": "https://api.github.com/users/markwpiper/followers",
+          "following_url": "https://api.github.com/users/markwpiper/following{/other_user}",
+          "gists_url": "https://api.github.com/users/markwpiper/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/markwpiper/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/markwpiper/subscriptions",
+          "organizations_url": "https://api.github.com/users/markwpiper/orgs",
+          "repos_url": "https://api.github.com/users/markwpiper/repos",
+          "events_url": "https://api.github.com/users/markwpiper/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/markwpiper/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2017-06-01T19:25:13Z",
+        "updated_at": "2017-06-05T10:30:37Z",
+        "closed_at": "2017-06-05T10:11:24Z",
+        "body": "README.md says \"If you are rendering fragments for a collection of objects, have a look at jbuilder_cache_multi gem. It uses fetch_multi (>= Rails 4.1) to fetch multiple keys at once.\"\r\n\r\nUnfortunately the current version of this gem has a critical bug (see https://github.com/yonahforst/jbuilder_cache_multi/issues/17)\r\n\r\nPlease recommend using this gem only from github master until the bug fix has been released.\r\ngem 'jbuilder_cache_multi', github: 'yonahforst/jbuilder_cache_multi', branch: 'master'\r\n"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/comments/306156341",
+        "html_url": "https://github.com/rails/jbuilder/issues/399#issuecomment-306156341",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "id": 306156341,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-05T10:30:37Z",
+        "updated_at": "2017-06-05T10:30:37Z",
+        "body": "BTW, I'd love to see multifetch collection handling added to Jbuilder. I've just pushed a 2.7.0 release that now requires Rails 4.2+, so it should be possible. I'd prefer if we didn't need a new method for it, though. Think that's possible? Something you're interested in working on? Thanks again!"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:30:37Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001828017",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/399/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/399/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/399/events",
+        "html_url": "https://github.com/rails/jbuilder/issues/399",
+        "id": 232984154,
+        "number": 399,
+        "title": "Readme recommends broken version of jbuilder_cache_multi gem",
+        "user": {
+          "login": "markwpiper",
+          "id": 119986,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/119986?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/markwpiper",
+          "html_url": "https://github.com/markwpiper",
+          "followers_url": "https://api.github.com/users/markwpiper/followers",
+          "following_url": "https://api.github.com/users/markwpiper/following{/other_user}",
+          "gists_url": "https://api.github.com/users/markwpiper/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/markwpiper/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/markwpiper/subscriptions",
+          "organizations_url": "https://api.github.com/users/markwpiper/orgs",
+          "repos_url": "https://api.github.com/users/markwpiper/repos",
+          "events_url": "https://api.github.com/users/markwpiper/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/markwpiper/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 2,
+        "created_at": "2017-06-01T19:25:13Z",
+        "updated_at": "2017-06-05T10:29:34Z",
+        "closed_at": "2017-06-05T10:11:24Z",
+        "body": "README.md says \"If you are rendering fragments for a collection of objects, have a look at jbuilder_cache_multi gem. It uses fetch_multi (>= Rails 4.1) to fetch multiple keys at once.\"\r\n\r\nUnfortunately the current version of this gem has a critical bug (see https://github.com/yonahforst/jbuilder_cache_multi/issues/17)\r\n\r\nPlease recommend using this gem only from github master until the bug fix has been released.\r\ngem 'jbuilder_cache_multi', github: 'yonahforst/jbuilder_cache_multi', branch: 'master'\r\n"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/comments/306156171",
+        "html_url": "https://github.com/rails/jbuilder/issues/399#issuecomment-306156171",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "id": 306156171,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-05T10:29:33Z",
+        "updated_at": "2017-06-05T10:29:33Z",
+        "body": "❤️\n\nOn Mon, Jun 5, 2017 at 12:25 PM, Yonah Forst <notifications@github.com>\nwrote:\n\n> just pushed\n>\n> —\n> You are receiving this because you modified the open/close state.\n> Reply to this email directly, view it on GitHub\n> <https://github.com/rails/jbuilder/issues/399#issuecomment-306155285>, or mute\n> the thread\n> <https://github.com/notifications/unsubscribe-auth/AAAKtbyXYEiPmBgXc8xooJQI-aq7eaZ4ks5sA9eYgaJpZM4Ntbj5>\n> .\n>\n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:29:34Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001738563",
+    "type": "IssuesEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "closed",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/399/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/399/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/399/events",
+        "html_url": "https://github.com/rails/jbuilder/issues/399",
+        "id": 232984154,
+        "number": 399,
+        "title": "Readme recommends broken version of jbuilder_cache_multi gem",
+        "user": {
+          "login": "markwpiper",
+          "id": 119986,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/119986?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/markwpiper",
+          "html_url": "https://github.com/markwpiper",
+          "followers_url": "https://api.github.com/users/markwpiper/followers",
+          "following_url": "https://api.github.com/users/markwpiper/following{/other_user}",
+          "gists_url": "https://api.github.com/users/markwpiper/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/markwpiper/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/markwpiper/subscriptions",
+          "organizations_url": "https://api.github.com/users/markwpiper/orgs",
+          "repos_url": "https://api.github.com/users/markwpiper/repos",
+          "events_url": "https://api.github.com/users/markwpiper/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/markwpiper/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2017-06-01T19:25:13Z",
+        "updated_at": "2017-06-05T10:11:24Z",
+        "closed_at": "2017-06-05T10:11:24Z",
+        "body": "README.md says \"If you are rendering fragments for a collection of objects, have a look at jbuilder_cache_multi gem. It uses fetch_multi (>= Rails 4.1) to fetch multiple keys at once.\"\r\n\r\nUnfortunately the current version of this gem has a critical bug (see https://github.com/yonahforst/jbuilder_cache_multi/issues/17)\r\n\r\nPlease recommend using this gem only from github master until the bug fix has been released.\r\ngem 'jbuilder_cache_multi', github: 'yonahforst/jbuilder_cache_multi', branch: 'master'\r\n"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:11:24Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001738562",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/399/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/399/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/399/events",
+        "html_url": "https://github.com/rails/jbuilder/issues/399",
+        "id": 232984154,
+        "number": 399,
+        "title": "Readme recommends broken version of jbuilder_cache_multi gem",
+        "user": {
+          "login": "markwpiper",
+          "id": 119986,
+          "avatar_url": "https://avatars0.githubusercontent.com/u/119986?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/markwpiper",
+          "html_url": "https://github.com/markwpiper",
+          "followers_url": "https://api.github.com/users/markwpiper/followers",
+          "following_url": "https://api.github.com/users/markwpiper/following{/other_user}",
+          "gists_url": "https://api.github.com/users/markwpiper/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/markwpiper/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/markwpiper/subscriptions",
+          "organizations_url": "https://api.github.com/users/markwpiper/orgs",
+          "repos_url": "https://api.github.com/users/markwpiper/repos",
+          "events_url": "https://api.github.com/users/markwpiper/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/markwpiper/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2017-06-01T19:25:13Z",
+        "updated_at": "2017-06-05T10:11:24Z",
+        "closed_at": "2017-06-05T10:11:24Z",
+        "body": "README.md says \"If you are rendering fragments for a collection of objects, have a look at jbuilder_cache_multi gem. It uses fetch_multi (>= Rails 4.1) to fetch multiple keys at once.\"\r\n\r\nUnfortunately the current version of this gem has a critical bug (see https://github.com/yonahforst/jbuilder_cache_multi/issues/17)\r\n\r\nPlease recommend using this gem only from github master until the bug fix has been released.\r\ngem 'jbuilder_cache_multi', github: 'yonahforst/jbuilder_cache_multi', branch: 'master'\r\n"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/comments/306152706",
+        "html_url": "https://github.com/rails/jbuilder/issues/399#issuecomment-306152706",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/399",
+        "id": 306152706,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-05T10:11:24Z",
+        "updated_at": "2017-06-05T10:11:24Z",
+        "body": "I trust that @yonahforst will soon be able to push out a fresh release to get this resolved 👍"
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:11:24Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001727189",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/400",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/400/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/400/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/400/events",
+        "html_url": "https://github.com/rails/jbuilder/pull/400",
+        "id": 232989706,
+        "number": 400,
+        "title": "Fix implicitly rendering a JSON partial with the same name as an HTML partial",
+        "user": {
+          "login": "georgeclaghorn",
+          "id": 94129,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/94129?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/georgeclaghorn",
+          "html_url": "https://github.com/georgeclaghorn",
+          "followers_url": "https://api.github.com/users/georgeclaghorn/followers",
+          "following_url": "https://api.github.com/users/georgeclaghorn/following{/other_user}",
+          "gists_url": "https://api.github.com/users/georgeclaghorn/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/georgeclaghorn/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/georgeclaghorn/subscriptions",
+          "organizations_url": "https://api.github.com/users/georgeclaghorn/orgs",
+          "repos_url": "https://api.github.com/users/georgeclaghorn/repos",
+          "events_url": "https://api.github.com/users/georgeclaghorn/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/georgeclaghorn/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2017-06-01T19:45:18Z",
+        "updated_at": "2017-06-05T10:09:09Z",
+        "closed_at": "2017-06-05T09:45:28Z",
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/jbuilder/pulls/400",
+          "html_url": "https://github.com/rails/jbuilder/pull/400",
+          "diff_url": "https://github.com/rails/jbuilder/pull/400.diff",
+          "patch_url": "https://github.com/rails/jbuilder/pull/400.patch"
+        },
+        "body": "Assume two non-empty partials, one at `posts/_post.json.jbuilder` and the other at `posts/_post.html.erb`.\r\n\r\nThe following Jbuilder template unexpectedly results in an empty JSON object:\r\n\r\n```ruby\r\njbuilder.post @post, partial: \"posts/post\", as: :post\r\n```\r\n\r\nThis happens because, deep inside Jbuilder, `ActionView::Base#render` is called without the `:handlers` option. Action View finds all partial templates named `posts/post` and uses the first match, which may be an ERB template.\r\n\r\nTo fix, change `JbuilderTemplate#_set_inline_partial` to call `_render_partial_with_options` when given a singular object, as it would for a collection. This ensures that `ActionView::Base#render` is called with the necessary template lookup options.\r\n\r\nUnfortunately, `ActionView::Base#render` doesn’t respect the `:handlers` option in Rails versions older than 4.0.0, so it’s not possible to fix this for Rails 3, which Jbuilder currently supports.\r\n\r\n/cc @jeremy"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/comments/306152287",
+        "html_url": "https://github.com/rails/jbuilder/pull/400#issuecomment-306152287",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/400",
+        "id": 306152287,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-05T10:09:09Z",
+        "updated_at": "2017-06-05T10:09:09Z",
+        "body": "Released jbuilder 2.7.0 that now depends on Rails 4.2+."
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:09:09Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001721979",
+    "type": "CreateEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "ref": "v2.7.0",
+      "ref_type": "tag",
+      "master_branch": "master",
+      "description": "Jbuilder: generate JSON objects with a Builder-style DSL",
+      "pusher_type": "user"
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:08:08Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001718536",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "push_id": 1780436840,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "eb5d37636fe3d7b2e3f01202ba3fd74693e1405e",
+      "before": "5207ff394533177fffdd768bfaa6413a0cd16dc8",
+      "commits": [
+        {
+          "sha": "eb5d37636fe3d7b2e3f01202ba3fd74693e1405e",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Bump to Rails 4.2.0 as that's the most recently supported Rails version\n\nThis solves issues with json 1.8.3 not compiling against Ruby 2.4.1 etc.",
+          "distinct": true,
+          "url": "https://api.github.com/repos/rails/jbuilder/commits/eb5d37636fe3d7b2e3f01202ba3fd74693e1405e"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-06-05T10:07:27Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001618903",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "push_id": 1780403643,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "5207ff394533177fffdd768bfaa6413a0cd16dc8",
+      "before": "1ed80b07b349b25734b7a9147c2770a981d72a68",
+      "commits": [
+        {
+          "sha": "5207ff394533177fffdd768bfaa6413a0cd16dc8",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Require Rails 4+ to ensure the fix from #400 will apply properly and bump a minor version accordingly",
+          "distinct": true,
+          "url": "https://api.github.com/repos/rails/jbuilder/commits/5207ff394533177fffdd768bfaa6413a0cd16dc8"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-06-05T09:48:38Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001601493",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "push_id": 1780398012,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "1ed80b07b349b25734b7a9147c2770a981d72a68",
+      "before": "6627fd25496f06baca3a16fa4bbd9f2e80fdb409",
+      "commits": [
+        {
+          "sha": "1ed80b07b349b25734b7a9147c2770a981d72a68",
+          "author": {
+            "email": "george.claghorn@gmail.com",
+            "name": "George Claghorn"
+          },
+          "message": "Fix implicitly rendering a JSON partial with the same name as an HTML partial (#400)",
+          "distinct": true,
+          "url": "https://api.github.com/repos/rails/jbuilder/commits/1ed80b07b349b25734b7a9147c2770a981d72a68"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-06-05T09:45:30Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "6001601324",
+    "type": "PullRequestEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "closed",
+      "number": 400,
+      "pull_request": {
+        "url": "https://api.github.com/repos/rails/jbuilder/pulls/400",
+        "id": 123578652,
+        "html_url": "https://github.com/rails/jbuilder/pull/400",
+        "diff_url": "https://github.com/rails/jbuilder/pull/400.diff",
+        "patch_url": "https://github.com/rails/jbuilder/pull/400.patch",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/400",
+        "number": 400,
+        "state": "closed",
+        "locked": false,
+        "title": "Fix implicitly rendering a JSON partial with the same name as an HTML partial",
+        "user": {
+          "login": "georgeclaghorn",
+          "id": 94129,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/94129?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/georgeclaghorn",
+          "html_url": "https://github.com/georgeclaghorn",
+          "followers_url": "https://api.github.com/users/georgeclaghorn/followers",
+          "following_url": "https://api.github.com/users/georgeclaghorn/following{/other_user}",
+          "gists_url": "https://api.github.com/users/georgeclaghorn/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/georgeclaghorn/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/georgeclaghorn/subscriptions",
+          "organizations_url": "https://api.github.com/users/georgeclaghorn/orgs",
+          "repos_url": "https://api.github.com/users/georgeclaghorn/repos",
+          "events_url": "https://api.github.com/users/georgeclaghorn/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/georgeclaghorn/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "body": "Assume two non-empty partials, one at `posts/_post.json.jbuilder` and the other at `posts/_post.html.erb`.\r\n\r\nThe following Jbuilder template unexpectedly results in an empty JSON object:\r\n\r\n```ruby\r\njbuilder.post @post, partial: \"posts/post\", as: :post\r\n```\r\n\r\nThis happens because, deep inside Jbuilder, `ActionView::Base#render` is called without the `:handlers` option. Action View finds all partial templates named `posts/post` and uses the first match, which may be an ERB template.\r\n\r\nTo fix, change `JbuilderTemplate#_set_inline_partial` to call `_render_partial_with_options` when given a singular object, as it would for a collection. This ensures that `ActionView::Base#render` is called with the necessary template lookup options.\r\n\r\nUnfortunately, `ActionView::Base#render` doesn’t respect the `:handlers` option in Rails versions older than 4.0.0, so it’s not possible to fix this for Rails 3, which Jbuilder currently supports.\r\n\r\n/cc @jeremy",
+        "created_at": "2017-06-01T19:45:18Z",
+        "updated_at": "2017-06-05T09:45:28Z",
+        "closed_at": "2017-06-05T09:45:28Z",
+        "merged_at": "2017-06-05T09:45:28Z",
+        "merge_commit_sha": "1ed80b07b349b25734b7a9147c2770a981d72a68",
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "requested_reviewers": [
+          {
+            "login": "dhh",
+            "id": 2741,
+            "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/dhh",
+            "html_url": "https://github.com/dhh",
+            "followers_url": "https://api.github.com/users/dhh/followers",
+            "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+            "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+            "organizations_url": "https://api.github.com/users/dhh/orgs",
+            "repos_url": "https://api.github.com/users/dhh/repos",
+            "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/dhh/received_events",
+            "type": "User",
+            "site_admin": false
+          }
+        ],
+        "milestone": null,
+        "commits_url": "https://api.github.com/repos/rails/jbuilder/pulls/400/commits",
+        "review_comments_url": "https://api.github.com/repos/rails/jbuilder/pulls/400/comments",
+        "review_comment_url": "https://api.github.com/repos/rails/jbuilder/pulls/comments{/number}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/400/comments",
+        "statuses_url": "https://api.github.com/repos/rails/jbuilder/statuses/755f8a997cc74d15f77b482d7e9c24cfd90c7fcd",
+        "head": {
+          "label": "georgeclaghorn:fix-html-partial-shadowing",
+          "ref": "fix-html-partial-shadowing",
+          "sha": "755f8a997cc74d15f77b482d7e9c24cfd90c7fcd",
+          "user": {
+            "login": "georgeclaghorn",
+            "id": 94129,
+            "avatar_url": "https://avatars2.githubusercontent.com/u/94129?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/georgeclaghorn",
+            "html_url": "https://github.com/georgeclaghorn",
+            "followers_url": "https://api.github.com/users/georgeclaghorn/followers",
+            "following_url": "https://api.github.com/users/georgeclaghorn/following{/other_user}",
+            "gists_url": "https://api.github.com/users/georgeclaghorn/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/georgeclaghorn/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/georgeclaghorn/subscriptions",
+            "organizations_url": "https://api.github.com/users/georgeclaghorn/orgs",
+            "repos_url": "https://api.github.com/users/georgeclaghorn/repos",
+            "events_url": "https://api.github.com/users/georgeclaghorn/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/georgeclaghorn/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 71030505,
+            "name": "jbuilder",
+            "full_name": "georgeclaghorn/jbuilder",
+            "owner": {
+              "login": "georgeclaghorn",
+              "id": 94129,
+              "avatar_url": "https://avatars2.githubusercontent.com/u/94129?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/georgeclaghorn",
+              "html_url": "https://github.com/georgeclaghorn",
+              "followers_url": "https://api.github.com/users/georgeclaghorn/followers",
+              "following_url": "https://api.github.com/users/georgeclaghorn/following{/other_user}",
+              "gists_url": "https://api.github.com/users/georgeclaghorn/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/georgeclaghorn/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/georgeclaghorn/subscriptions",
+              "organizations_url": "https://api.github.com/users/georgeclaghorn/orgs",
+              "repos_url": "https://api.github.com/users/georgeclaghorn/repos",
+              "events_url": "https://api.github.com/users/georgeclaghorn/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/georgeclaghorn/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/georgeclaghorn/jbuilder",
+            "description": "Jbuilder: generate JSON objects with a Builder-style DSL",
+            "fork": true,
+            "url": "https://api.github.com/repos/georgeclaghorn/jbuilder",
+            "forks_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/forks",
+            "keys_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/teams",
+            "hooks_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/hooks",
+            "issue_events_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/events",
+            "assignees_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/tags",
+            "blobs_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/languages",
+            "stargazers_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/stargazers",
+            "contributors_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/contributors",
+            "subscribers_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/subscribers",
+            "subscription_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/subscription",
+            "commits_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/merges",
+            "archive_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/downloads",
+            "issues_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/labels{/name}",
+            "releases_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/georgeclaghorn/jbuilder/deployments",
+            "created_at": "2016-10-16T04:43:23Z",
+            "updated_at": "2016-10-16T04:43:24Z",
+            "pushed_at": "2017-06-01T19:33:59Z",
+            "git_url": "git://github.com/georgeclaghorn/jbuilder.git",
+            "ssh_url": "git@github.com:georgeclaghorn/jbuilder.git",
+            "clone_url": "https://github.com/georgeclaghorn/jbuilder.git",
+            "svn_url": "https://github.com/georgeclaghorn/jbuilder",
+            "homepage": "",
+            "size": 448,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "language": "Ruby",
+            "has_issues": false,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 0,
+            "mirror_url": null,
+            "open_issues_count": 0,
+            "forks": 0,
+            "open_issues": 0,
+            "watchers": 0,
+            "default_branch": "master"
+          }
+        },
+        "base": {
+          "label": "rails:master",
+          "ref": "master",
+          "sha": "6627fd25496f06baca3a16fa4bbd9f2e80fdb409",
+          "user": {
+            "login": "rails",
+            "id": 4223,
+            "avatar_url": "https://avatars2.githubusercontent.com/u/4223?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/rails",
+            "html_url": "https://github.com/rails",
+            "followers_url": "https://api.github.com/users/rails/followers",
+            "following_url": "https://api.github.com/users/rails/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rails/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/rails/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rails/subscriptions",
+            "organizations_url": "https://api.github.com/users/rails/orgs",
+            "repos_url": "https://api.github.com/users/rails/repos",
+            "events_url": "https://api.github.com/users/rails/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/rails/received_events",
+            "type": "Organization",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 2861056,
+            "name": "jbuilder",
+            "full_name": "rails/jbuilder",
+            "owner": {
+              "login": "rails",
+              "id": 4223,
+              "avatar_url": "https://avatars2.githubusercontent.com/u/4223?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/rails",
+              "html_url": "https://github.com/rails",
+              "followers_url": "https://api.github.com/users/rails/followers",
+              "following_url": "https://api.github.com/users/rails/following{/other_user}",
+              "gists_url": "https://api.github.com/users/rails/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/rails/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/rails/subscriptions",
+              "organizations_url": "https://api.github.com/users/rails/orgs",
+              "repos_url": "https://api.github.com/users/rails/repos",
+              "events_url": "https://api.github.com/users/rails/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/rails/received_events",
+              "type": "Organization",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/rails/jbuilder",
+            "description": "Jbuilder: generate JSON objects with a Builder-style DSL",
+            "fork": false,
+            "url": "https://api.github.com/repos/rails/jbuilder",
+            "forks_url": "https://api.github.com/repos/rails/jbuilder/forks",
+            "keys_url": "https://api.github.com/repos/rails/jbuilder/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/rails/jbuilder/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/rails/jbuilder/teams",
+            "hooks_url": "https://api.github.com/repos/rails/jbuilder/hooks",
+            "issue_events_url": "https://api.github.com/repos/rails/jbuilder/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/rails/jbuilder/events",
+            "assignees_url": "https://api.github.com/repos/rails/jbuilder/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/rails/jbuilder/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/rails/jbuilder/tags",
+            "blobs_url": "https://api.github.com/repos/rails/jbuilder/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/rails/jbuilder/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/rails/jbuilder/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/rails/jbuilder/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/rails/jbuilder/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/rails/jbuilder/languages",
+            "stargazers_url": "https://api.github.com/repos/rails/jbuilder/stargazers",
+            "contributors_url": "https://api.github.com/repos/rails/jbuilder/contributors",
+            "subscribers_url": "https://api.github.com/repos/rails/jbuilder/subscribers",
+            "subscription_url": "https://api.github.com/repos/rails/jbuilder/subscription",
+            "commits_url": "https://api.github.com/repos/rails/jbuilder/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/rails/jbuilder/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/rails/jbuilder/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/rails/jbuilder/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/rails/jbuilder/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/rails/jbuilder/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/rails/jbuilder/merges",
+            "archive_url": "https://api.github.com/repos/rails/jbuilder/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/rails/jbuilder/downloads",
+            "issues_url": "https://api.github.com/repos/rails/jbuilder/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/rails/jbuilder/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/rails/jbuilder/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/rails/jbuilder/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/rails/jbuilder/labels{/name}",
+            "releases_url": "https://api.github.com/repos/rails/jbuilder/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/rails/jbuilder/deployments",
+            "created_at": "2011-11-27T14:02:35Z",
+            "updated_at": "2017-06-05T09:44:17Z",
+            "pushed_at": "2017-06-05T09:45:28Z",
+            "git_url": "git://github.com/rails/jbuilder.git",
+            "ssh_url": "git@github.com:rails/jbuilder.git",
+            "clone_url": "https://github.com/rails/jbuilder.git",
+            "svn_url": "https://github.com/rails/jbuilder",
+            "homepage": "",
+            "size": 450,
+            "stargazers_count": 3010,
+            "watchers_count": 3010,
+            "language": "Ruby",
+            "has_issues": true,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 282,
+            "mirror_url": null,
+            "open_issues_count": 42,
+            "forks": 282,
+            "open_issues": 42,
+            "watchers": 3010,
+            "default_branch": "master"
+          }
+        },
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/rails/jbuilder/pulls/400"
+          },
+          "html": {
+            "href": "https://github.com/rails/jbuilder/pull/400"
+          },
+          "issue": {
+            "href": "https://api.github.com/repos/rails/jbuilder/issues/400"
+          },
+          "comments": {
+            "href": "https://api.github.com/repos/rails/jbuilder/issues/400/comments"
+          },
+          "review_comments": {
+            "href": "https://api.github.com/repos/rails/jbuilder/pulls/400/comments"
+          },
+          "review_comment": {
+            "href": "https://api.github.com/repos/rails/jbuilder/pulls/comments{/number}"
+          },
+          "commits": {
+            "href": "https://api.github.com/repos/rails/jbuilder/pulls/400/commits"
+          },
+          "statuses": {
+            "href": "https://api.github.com/repos/rails/jbuilder/statuses/755f8a997cc74d15f77b482d7e9c24cfd90c7fcd"
+          }
+        },
+        "merged": true,
+        "mergeable": null,
+        "rebaseable": null,
+        "mergeable_state": "unknown",
+        "merged_by": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "comments": 3,
+        "review_comments": 0,
+        "maintainer_can_modify": false,
+        "commits": 1,
+        "additions": 21,
+        "deletions": 3,
+        "changed_files": 2
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-05T09:45:28Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "5990170636",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 2861056,
+      "name": "rails/jbuilder",
+      "url": "https://api.github.com/repos/rails/jbuilder"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/400",
+        "repository_url": "https://api.github.com/repos/rails/jbuilder",
+        "labels_url": "https://api.github.com/repos/rails/jbuilder/issues/400/labels{/name}",
+        "comments_url": "https://api.github.com/repos/rails/jbuilder/issues/400/comments",
+        "events_url": "https://api.github.com/repos/rails/jbuilder/issues/400/events",
+        "html_url": "https://github.com/rails/jbuilder/pull/400",
+        "id": 232989706,
+        "number": 400,
+        "title": "Fix implicitly rendering a JSON partial with the same name as an HTML partial",
+        "user": {
+          "login": "georgeclaghorn",
+          "id": 94129,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/94129?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/georgeclaghorn",
+          "html_url": "https://github.com/georgeclaghorn",
+          "followers_url": "https://api.github.com/users/georgeclaghorn/followers",
+          "following_url": "https://api.github.com/users/georgeclaghorn/following{/other_user}",
+          "gists_url": "https://api.github.com/users/georgeclaghorn/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/georgeclaghorn/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/georgeclaghorn/subscriptions",
+          "organizations_url": "https://api.github.com/users/georgeclaghorn/orgs",
+          "repos_url": "https://api.github.com/users/georgeclaghorn/repos",
+          "events_url": "https://api.github.com/users/georgeclaghorn/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/georgeclaghorn/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2017-06-01T19:45:18Z",
+        "updated_at": "2017-06-02T10:36:38Z",
+        "closed_at": null,
+        "pull_request": {
+          "url": "https://api.github.com/repos/rails/jbuilder/pulls/400",
+          "html_url": "https://github.com/rails/jbuilder/pull/400",
+          "diff_url": "https://github.com/rails/jbuilder/pull/400.diff",
+          "patch_url": "https://github.com/rails/jbuilder/pull/400.patch"
+        },
+        "body": "Assume two partials, one at `posts/_post.json.jbuilder` and the other at `posts/_post.html.erb`.\r\n\r\nThe following Jbuilder template unexpectedly results in an empty JSON object:\r\n\r\n```ruby\r\njbuilder.post @post, partial: \"posts/post\", as: :post\r\n```\r\n\r\nThis happens because, deep inside Jbuilder, `ActionView::Base#render` is called without the `:handlers` option. Action View finds all partial templates named `posts/post` and uses the first match, which may be an ERB template.\r\n\r\nTo fix, change `JbuilderTemplate#_set_inline_partial` to call `_render_partial_with_options` when given a singular object, as it would for a collection. This ensures that `ActionView::Base#render` is called with the necessary template lookup options.\r\n\r\nUnfortunately, `ActionView::Base#render` doesn’t respect the `:handlers` option in Rails versions older than 4.0.0, so it’s not possible to fix this for Rails 3, which Jbuilder currently supports.\r\n\r\n/cc @jeremy"
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/rails/jbuilder/issues/comments/305751862",
+        "html_url": "https://github.com/rails/jbuilder/pull/400#issuecomment-305751862",
+        "issue_url": "https://api.github.com/repos/rails/jbuilder/issues/400",
+        "id": 305751862,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-06-02T10:36:38Z",
+        "updated_at": "2017-06-02T10:36:38Z",
+        "body": "+1 to dropping Rails 3 support. Earlier versions still work with it. Just need to specify it in the gemspec."
+      }
+    },
+    "public": true,
+    "created_at": "2017-06-02T10:36:38Z",
+    "org": {
+      "id": 4223,
+      "login": "rails",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/rails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223?"
+    }
+  },
+  {
+    "id": "5976705015",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1772482336,
+      "size": 2,
+      "distinct_size": 2,
+      "ref": "refs/heads/master",
+      "head": "84152ee317963c05fa6ef8e7f49a03ed1ebf4c2b",
+      "before": "b6e20f717954cf78b925790ae63fbf472d52b1d0",
+      "commits": [
+        {
+          "sha": "a7c75499b7dd90fb8b1c03c2f0fc941e3b7fb8e1",
+          "author": {
+            "email": "rb@atomicflow.org",
+            "name": "Rolandas Barysas"
+          },
+          "message": "Fix closing tag",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/a7c75499b7dd90fb8b1c03c2f0fc941e3b7fb8e1"
+        },
+        {
+          "sha": "84152ee317963c05fa6ef8e7f49a03ed1ebf4c2b",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Merge pull request #2 from rbarysas/fix-closing-tag\n\nFix closing tag in readme",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/84152ee317963c05fa6ef8e7f49a03ed1ebf4c2b"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-31T17:35:17Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5976704955",
+    "type": "PullRequestEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "action": "closed",
+      "number": 2,
+      "pull_request": {
+        "url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2",
+        "id": 123326403,
+        "html_url": "https://github.com/basecamp/google_sign_in/pull/2",
+        "diff_url": "https://github.com/basecamp/google_sign_in/pull/2.diff",
+        "patch_url": "https://github.com/basecamp/google_sign_in/pull/2.patch",
+        "issue_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/2",
+        "number": 2,
+        "state": "closed",
+        "locked": false,
+        "title": "Fix closing tag in readme",
+        "user": {
+          "login": "rbarysas",
+          "id": 1409998,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/1409998?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/rbarysas",
+          "html_url": "https://github.com/rbarysas",
+          "followers_url": "https://api.github.com/users/rbarysas/followers",
+          "following_url": "https://api.github.com/users/rbarysas/following{/other_user}",
+          "gists_url": "https://api.github.com/users/rbarysas/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/rbarysas/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/rbarysas/subscriptions",
+          "organizations_url": "https://api.github.com/users/rbarysas/orgs",
+          "repos_url": "https://api.github.com/users/rbarysas/repos",
+          "events_url": "https://api.github.com/users/rbarysas/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/rbarysas/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "body": "",
+        "created_at": "2017-05-31T17:26:46Z",
+        "updated_at": "2017-05-31T17:35:16Z",
+        "closed_at": "2017-05-31T17:35:16Z",
+        "merged_at": "2017-05-31T17:35:16Z",
+        "merge_commit_sha": "84152ee317963c05fa6ef8e7f49a03ed1ebf4c2b",
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "requested_reviewers": [
+
+        ],
+        "milestone": null,
+        "commits_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2/commits",
+        "review_comments_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2/comments",
+        "review_comment_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/comments{/number}",
+        "comments_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/2/comments",
+        "statuses_url": "https://api.github.com/repos/basecamp/google_sign_in/statuses/a7c75499b7dd90fb8b1c03c2f0fc941e3b7fb8e1",
+        "head": {
+          "label": "rbarysas:fix-closing-tag",
+          "ref": "fix-closing-tag",
+          "sha": "a7c75499b7dd90fb8b1c03c2f0fc941e3b7fb8e1",
+          "user": {
+            "login": "rbarysas",
+            "id": 1409998,
+            "avatar_url": "https://avatars3.githubusercontent.com/u/1409998?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/rbarysas",
+            "html_url": "https://github.com/rbarysas",
+            "followers_url": "https://api.github.com/users/rbarysas/followers",
+            "following_url": "https://api.github.com/users/rbarysas/following{/other_user}",
+            "gists_url": "https://api.github.com/users/rbarysas/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/rbarysas/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/rbarysas/subscriptions",
+            "organizations_url": "https://api.github.com/users/rbarysas/orgs",
+            "repos_url": "https://api.github.com/users/rbarysas/repos",
+            "events_url": "https://api.github.com/users/rbarysas/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/rbarysas/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 92970752,
+            "name": "google_sign_in",
+            "full_name": "rbarysas/google_sign_in",
+            "owner": {
+              "login": "rbarysas",
+              "id": 1409998,
+              "avatar_url": "https://avatars3.githubusercontent.com/u/1409998?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/rbarysas",
+              "html_url": "https://github.com/rbarysas",
+              "followers_url": "https://api.github.com/users/rbarysas/followers",
+              "following_url": "https://api.github.com/users/rbarysas/following{/other_user}",
+              "gists_url": "https://api.github.com/users/rbarysas/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/rbarysas/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/rbarysas/subscriptions",
+              "organizations_url": "https://api.github.com/users/rbarysas/orgs",
+              "repos_url": "https://api.github.com/users/rbarysas/repos",
+              "events_url": "https://api.github.com/users/rbarysas/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/rbarysas/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/rbarysas/google_sign_in",
+            "description": "Sign in (or up) with Google for Rails applications",
+            "fork": true,
+            "url": "https://api.github.com/repos/rbarysas/google_sign_in",
+            "forks_url": "https://api.github.com/repos/rbarysas/google_sign_in/forks",
+            "keys_url": "https://api.github.com/repos/rbarysas/google_sign_in/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/rbarysas/google_sign_in/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/rbarysas/google_sign_in/teams",
+            "hooks_url": "https://api.github.com/repos/rbarysas/google_sign_in/hooks",
+            "issue_events_url": "https://api.github.com/repos/rbarysas/google_sign_in/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/rbarysas/google_sign_in/events",
+            "assignees_url": "https://api.github.com/repos/rbarysas/google_sign_in/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/rbarysas/google_sign_in/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/rbarysas/google_sign_in/tags",
+            "blobs_url": "https://api.github.com/repos/rbarysas/google_sign_in/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/rbarysas/google_sign_in/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/rbarysas/google_sign_in/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/rbarysas/google_sign_in/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/rbarysas/google_sign_in/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/rbarysas/google_sign_in/languages",
+            "stargazers_url": "https://api.github.com/repos/rbarysas/google_sign_in/stargazers",
+            "contributors_url": "https://api.github.com/repos/rbarysas/google_sign_in/contributors",
+            "subscribers_url": "https://api.github.com/repos/rbarysas/google_sign_in/subscribers",
+            "subscription_url": "https://api.github.com/repos/rbarysas/google_sign_in/subscription",
+            "commits_url": "https://api.github.com/repos/rbarysas/google_sign_in/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/rbarysas/google_sign_in/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/rbarysas/google_sign_in/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/rbarysas/google_sign_in/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/rbarysas/google_sign_in/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/rbarysas/google_sign_in/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/rbarysas/google_sign_in/merges",
+            "archive_url": "https://api.github.com/repos/rbarysas/google_sign_in/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/rbarysas/google_sign_in/downloads",
+            "issues_url": "https://api.github.com/repos/rbarysas/google_sign_in/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/rbarysas/google_sign_in/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/rbarysas/google_sign_in/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/rbarysas/google_sign_in/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/rbarysas/google_sign_in/labels{/name}",
+            "releases_url": "https://api.github.com/repos/rbarysas/google_sign_in/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/rbarysas/google_sign_in/deployments",
+            "created_at": "2017-05-31T17:22:43Z",
+            "updated_at": "2017-05-31T17:22:45Z",
+            "pushed_at": "2017-05-31T17:25:11Z",
+            "git_url": "git://github.com/rbarysas/google_sign_in.git",
+            "ssh_url": "git@github.com:rbarysas/google_sign_in.git",
+            "clone_url": "https://github.com/rbarysas/google_sign_in.git",
+            "svn_url": "https://github.com/rbarysas/google_sign_in",
+            "homepage": null,
+            "size": 7,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "language": "Ruby",
+            "has_issues": false,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 0,
+            "mirror_url": null,
+            "open_issues_count": 0,
+            "forks": 0,
+            "open_issues": 0,
+            "watchers": 0,
+            "default_branch": "master"
+          }
+        },
+        "base": {
+          "label": "basecamp:master",
+          "ref": "master",
+          "sha": "b6e20f717954cf78b925790ae63fbf472d52b1d0",
+          "user": {
+            "login": "basecamp",
+            "id": 13131,
+            "avatar_url": "https://avatars3.githubusercontent.com/u/13131?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/basecamp",
+            "html_url": "https://github.com/basecamp",
+            "followers_url": "https://api.github.com/users/basecamp/followers",
+            "following_url": "https://api.github.com/users/basecamp/following{/other_user}",
+            "gists_url": "https://api.github.com/users/basecamp/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/basecamp/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/basecamp/subscriptions",
+            "organizations_url": "https://api.github.com/users/basecamp/orgs",
+            "repos_url": "https://api.github.com/users/basecamp/repos",
+            "events_url": "https://api.github.com/users/basecamp/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/basecamp/received_events",
+            "type": "Organization",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 92837461,
+            "name": "google_sign_in",
+            "full_name": "basecamp/google_sign_in",
+            "owner": {
+              "login": "basecamp",
+              "id": 13131,
+              "avatar_url": "https://avatars3.githubusercontent.com/u/13131?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/basecamp",
+              "html_url": "https://github.com/basecamp",
+              "followers_url": "https://api.github.com/users/basecamp/followers",
+              "following_url": "https://api.github.com/users/basecamp/following{/other_user}",
+              "gists_url": "https://api.github.com/users/basecamp/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/basecamp/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/basecamp/subscriptions",
+              "organizations_url": "https://api.github.com/users/basecamp/orgs",
+              "repos_url": "https://api.github.com/users/basecamp/repos",
+              "events_url": "https://api.github.com/users/basecamp/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/basecamp/received_events",
+              "type": "Organization",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/basecamp/google_sign_in",
+            "description": "Sign in (or up) with Google for Rails applications",
+            "fork": false,
+            "url": "https://api.github.com/repos/basecamp/google_sign_in",
+            "forks_url": "https://api.github.com/repos/basecamp/google_sign_in/forks",
+            "keys_url": "https://api.github.com/repos/basecamp/google_sign_in/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/basecamp/google_sign_in/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/basecamp/google_sign_in/teams",
+            "hooks_url": "https://api.github.com/repos/basecamp/google_sign_in/hooks",
+            "issue_events_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/basecamp/google_sign_in/events",
+            "assignees_url": "https://api.github.com/repos/basecamp/google_sign_in/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/basecamp/google_sign_in/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/basecamp/google_sign_in/tags",
+            "blobs_url": "https://api.github.com/repos/basecamp/google_sign_in/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/basecamp/google_sign_in/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/basecamp/google_sign_in/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/basecamp/google_sign_in/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/basecamp/google_sign_in/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/basecamp/google_sign_in/languages",
+            "stargazers_url": "https://api.github.com/repos/basecamp/google_sign_in/stargazers",
+            "contributors_url": "https://api.github.com/repos/basecamp/google_sign_in/contributors",
+            "subscribers_url": "https://api.github.com/repos/basecamp/google_sign_in/subscribers",
+            "subscription_url": "https://api.github.com/repos/basecamp/google_sign_in/subscription",
+            "commits_url": "https://api.github.com/repos/basecamp/google_sign_in/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/basecamp/google_sign_in/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/basecamp/google_sign_in/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/basecamp/google_sign_in/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/basecamp/google_sign_in/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/basecamp/google_sign_in/merges",
+            "archive_url": "https://api.github.com/repos/basecamp/google_sign_in/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/basecamp/google_sign_in/downloads",
+            "issues_url": "https://api.github.com/repos/basecamp/google_sign_in/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/basecamp/google_sign_in/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/basecamp/google_sign_in/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/basecamp/google_sign_in/labels{/name}",
+            "releases_url": "https://api.github.com/repos/basecamp/google_sign_in/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/basecamp/google_sign_in/deployments",
+            "created_at": "2017-05-30T13:46:32Z",
+            "updated_at": "2017-05-31T17:34:06Z",
+            "pushed_at": "2017-05-31T17:35:16Z",
+            "git_url": "git://github.com/basecamp/google_sign_in.git",
+            "ssh_url": "git@github.com:basecamp/google_sign_in.git",
+            "clone_url": "https://github.com/basecamp/google_sign_in.git",
+            "svn_url": "https://github.com/basecamp/google_sign_in",
+            "homepage": null,
+            "size": 7,
+            "stargazers_count": 115,
+            "watchers_count": 115,
+            "language": "Ruby",
+            "has_issues": true,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 4,
+            "mirror_url": null,
+            "open_issues_count": 0,
+            "forks": 4,
+            "open_issues": 0,
+            "watchers": 115,
+            "default_branch": "master"
+          }
+        },
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2"
+          },
+          "html": {
+            "href": "https://github.com/basecamp/google_sign_in/pull/2"
+          },
+          "issue": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/issues/2"
+          },
+          "comments": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/issues/2/comments"
+          },
+          "review_comments": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2/comments"
+          },
+          "review_comment": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/comments{/number}"
+          },
+          "commits": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/2/commits"
+          },
+          "statuses": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/statuses/a7c75499b7dd90fb8b1c03c2f0fc941e3b7fb8e1"
+          }
+        },
+        "merged": true,
+        "mergeable": null,
+        "rebaseable": null,
+        "mergeable_state": "unknown",
+        "merged_by": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "comments": 0,
+        "review_comments": 0,
+        "maintainer_can_modify": false,
+        "commits": 1,
+        "additions": 1,
+        "deletions": 1,
+        "changed_files": 1
+      }
+    },
+    "public": true,
+    "created_at": "2017-05-31T17:35:16Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5973573834",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1771518879,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "b6e20f717954cf78b925790ae63fbf472d52b1d0",
+      "before": "87046ef03e495982345207dc2996a527e92a19b1",
+      "commits": [
+        {
+          "sha": "b6e20f717954cf78b925790ae63fbf472d52b1d0",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Note the requirement of using yield :head",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/b6e20f717954cf78b925790ae63fbf472d52b1d0"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-31T10:11:58Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5973562880",
+    "type": "PullRequestEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "action": "closed",
+      "number": 1,
+      "pull_request": {
+        "url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1",
+        "id": 123108240,
+        "html_url": "https://github.com/basecamp/google_sign_in/pull/1",
+        "diff_url": "https://github.com/basecamp/google_sign_in/pull/1.diff",
+        "patch_url": "https://github.com/basecamp/google_sign_in/pull/1.patch",
+        "issue_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1",
+        "number": 1,
+        "state": "closed",
+        "locked": false,
+        "title": "Consistent single vs double quotes",
+        "user": {
+          "login": "mazaira",
+          "id": 6529421,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/6529421?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mazaira",
+          "html_url": "https://github.com/mazaira",
+          "followers_url": "https://api.github.com/users/mazaira/followers",
+          "following_url": "https://api.github.com/users/mazaira/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mazaira/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mazaira/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mazaira/subscriptions",
+          "organizations_url": "https://api.github.com/users/mazaira/orgs",
+          "repos_url": "https://api.github.com/users/mazaira/repos",
+          "events_url": "https://api.github.com/users/mazaira/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mazaira/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "body": "I saw the `require`s in the Rakefile with doubles and just autocorrect the rest. What do you think? 😄 ",
+        "created_at": "2017-05-30T17:59:30Z",
+        "updated_at": "2017-05-31T10:10:15Z",
+        "closed_at": "2017-05-31T10:10:15Z",
+        "merged_at": null,
+        "merge_commit_sha": "b78c4683997429fa210fa1b61fe72c74f48c3601",
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "requested_reviewers": [
+
+        ],
+        "milestone": null,
+        "commits_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1/commits",
+        "review_comments_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1/comments",
+        "review_comment_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/comments{/number}",
+        "comments_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1/comments",
+        "statuses_url": "https://api.github.com/repos/basecamp/google_sign_in/statuses/aa6ccd94a6e3098fc49086f8507407886e5abb5d",
+        "head": {
+          "label": "mazaira:consistent-single-vs-double-quotes",
+          "ref": "consistent-single-vs-double-quotes",
+          "sha": "aa6ccd94a6e3098fc49086f8507407886e5abb5d",
+          "user": {
+            "login": "mazaira",
+            "id": 6529421,
+            "avatar_url": "https://avatars2.githubusercontent.com/u/6529421?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mazaira",
+            "html_url": "https://github.com/mazaira",
+            "followers_url": "https://api.github.com/users/mazaira/followers",
+            "following_url": "https://api.github.com/users/mazaira/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mazaira/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mazaira/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mazaira/subscriptions",
+            "organizations_url": "https://api.github.com/users/mazaira/orgs",
+            "repos_url": "https://api.github.com/users/mazaira/repos",
+            "events_url": "https://api.github.com/users/mazaira/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mazaira/received_events",
+            "type": "User",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 92858651,
+            "name": "google_sign_in",
+            "full_name": "mazaira/google_sign_in",
+            "owner": {
+              "login": "mazaira",
+              "id": 6529421,
+              "avatar_url": "https://avatars2.githubusercontent.com/u/6529421?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/mazaira",
+              "html_url": "https://github.com/mazaira",
+              "followers_url": "https://api.github.com/users/mazaira/followers",
+              "following_url": "https://api.github.com/users/mazaira/following{/other_user}",
+              "gists_url": "https://api.github.com/users/mazaira/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/mazaira/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/mazaira/subscriptions",
+              "organizations_url": "https://api.github.com/users/mazaira/orgs",
+              "repos_url": "https://api.github.com/users/mazaira/repos",
+              "events_url": "https://api.github.com/users/mazaira/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/mazaira/received_events",
+              "type": "User",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/mazaira/google_sign_in",
+            "description": "Sign in (or up) with Google for Rails applications",
+            "fork": true,
+            "url": "https://api.github.com/repos/mazaira/google_sign_in",
+            "forks_url": "https://api.github.com/repos/mazaira/google_sign_in/forks",
+            "keys_url": "https://api.github.com/repos/mazaira/google_sign_in/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/mazaira/google_sign_in/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/mazaira/google_sign_in/teams",
+            "hooks_url": "https://api.github.com/repos/mazaira/google_sign_in/hooks",
+            "issue_events_url": "https://api.github.com/repos/mazaira/google_sign_in/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/mazaira/google_sign_in/events",
+            "assignees_url": "https://api.github.com/repos/mazaira/google_sign_in/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/mazaira/google_sign_in/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/mazaira/google_sign_in/tags",
+            "blobs_url": "https://api.github.com/repos/mazaira/google_sign_in/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/mazaira/google_sign_in/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/mazaira/google_sign_in/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/mazaira/google_sign_in/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/mazaira/google_sign_in/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/mazaira/google_sign_in/languages",
+            "stargazers_url": "https://api.github.com/repos/mazaira/google_sign_in/stargazers",
+            "contributors_url": "https://api.github.com/repos/mazaira/google_sign_in/contributors",
+            "subscribers_url": "https://api.github.com/repos/mazaira/google_sign_in/subscribers",
+            "subscription_url": "https://api.github.com/repos/mazaira/google_sign_in/subscription",
+            "commits_url": "https://api.github.com/repos/mazaira/google_sign_in/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/mazaira/google_sign_in/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/mazaira/google_sign_in/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/mazaira/google_sign_in/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/mazaira/google_sign_in/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/mazaira/google_sign_in/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/mazaira/google_sign_in/merges",
+            "archive_url": "https://api.github.com/repos/mazaira/google_sign_in/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/mazaira/google_sign_in/downloads",
+            "issues_url": "https://api.github.com/repos/mazaira/google_sign_in/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/mazaira/google_sign_in/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/mazaira/google_sign_in/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/mazaira/google_sign_in/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/mazaira/google_sign_in/labels{/name}",
+            "releases_url": "https://api.github.com/repos/mazaira/google_sign_in/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/mazaira/google_sign_in/deployments",
+            "created_at": "2017-05-30T17:28:34Z",
+            "updated_at": "2017-05-30T17:28:36Z",
+            "pushed_at": "2017-05-30T17:57:35Z",
+            "git_url": "git://github.com/mazaira/google_sign_in.git",
+            "ssh_url": "git@github.com:mazaira/google_sign_in.git",
+            "clone_url": "https://github.com/mazaira/google_sign_in.git",
+            "svn_url": "https://github.com/mazaira/google_sign_in",
+            "homepage": null,
+            "size": 7,
+            "stargazers_count": 0,
+            "watchers_count": 0,
+            "language": "Ruby",
+            "has_issues": false,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 0,
+            "mirror_url": null,
+            "open_issues_count": 0,
+            "forks": 0,
+            "open_issues": 0,
+            "watchers": 0,
+            "default_branch": "master"
+          }
+        },
+        "base": {
+          "label": "basecamp:master",
+          "ref": "master",
+          "sha": "87046ef03e495982345207dc2996a527e92a19b1",
+          "user": {
+            "login": "basecamp",
+            "id": 13131,
+            "avatar_url": "https://avatars3.githubusercontent.com/u/13131?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/basecamp",
+            "html_url": "https://github.com/basecamp",
+            "followers_url": "https://api.github.com/users/basecamp/followers",
+            "following_url": "https://api.github.com/users/basecamp/following{/other_user}",
+            "gists_url": "https://api.github.com/users/basecamp/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/basecamp/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/basecamp/subscriptions",
+            "organizations_url": "https://api.github.com/users/basecamp/orgs",
+            "repos_url": "https://api.github.com/users/basecamp/repos",
+            "events_url": "https://api.github.com/users/basecamp/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/basecamp/received_events",
+            "type": "Organization",
+            "site_admin": false
+          },
+          "repo": {
+            "id": 92837461,
+            "name": "google_sign_in",
+            "full_name": "basecamp/google_sign_in",
+            "owner": {
+              "login": "basecamp",
+              "id": 13131,
+              "avatar_url": "https://avatars3.githubusercontent.com/u/13131?v=3",
+              "gravatar_id": "",
+              "url": "https://api.github.com/users/basecamp",
+              "html_url": "https://github.com/basecamp",
+              "followers_url": "https://api.github.com/users/basecamp/followers",
+              "following_url": "https://api.github.com/users/basecamp/following{/other_user}",
+              "gists_url": "https://api.github.com/users/basecamp/gists{/gist_id}",
+              "starred_url": "https://api.github.com/users/basecamp/starred{/owner}{/repo}",
+              "subscriptions_url": "https://api.github.com/users/basecamp/subscriptions",
+              "organizations_url": "https://api.github.com/users/basecamp/orgs",
+              "repos_url": "https://api.github.com/users/basecamp/repos",
+              "events_url": "https://api.github.com/users/basecamp/events{/privacy}",
+              "received_events_url": "https://api.github.com/users/basecamp/received_events",
+              "type": "Organization",
+              "site_admin": false
+            },
+            "private": false,
+            "html_url": "https://github.com/basecamp/google_sign_in",
+            "description": "Sign in (or up) with Google for Rails applications",
+            "fork": false,
+            "url": "https://api.github.com/repos/basecamp/google_sign_in",
+            "forks_url": "https://api.github.com/repos/basecamp/google_sign_in/forks",
+            "keys_url": "https://api.github.com/repos/basecamp/google_sign_in/keys{/key_id}",
+            "collaborators_url": "https://api.github.com/repos/basecamp/google_sign_in/collaborators{/collaborator}",
+            "teams_url": "https://api.github.com/repos/basecamp/google_sign_in/teams",
+            "hooks_url": "https://api.github.com/repos/basecamp/google_sign_in/hooks",
+            "issue_events_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/events{/number}",
+            "events_url": "https://api.github.com/repos/basecamp/google_sign_in/events",
+            "assignees_url": "https://api.github.com/repos/basecamp/google_sign_in/assignees{/user}",
+            "branches_url": "https://api.github.com/repos/basecamp/google_sign_in/branches{/branch}",
+            "tags_url": "https://api.github.com/repos/basecamp/google_sign_in/tags",
+            "blobs_url": "https://api.github.com/repos/basecamp/google_sign_in/git/blobs{/sha}",
+            "git_tags_url": "https://api.github.com/repos/basecamp/google_sign_in/git/tags{/sha}",
+            "git_refs_url": "https://api.github.com/repos/basecamp/google_sign_in/git/refs{/sha}",
+            "trees_url": "https://api.github.com/repos/basecamp/google_sign_in/git/trees{/sha}",
+            "statuses_url": "https://api.github.com/repos/basecamp/google_sign_in/statuses/{sha}",
+            "languages_url": "https://api.github.com/repos/basecamp/google_sign_in/languages",
+            "stargazers_url": "https://api.github.com/repos/basecamp/google_sign_in/stargazers",
+            "contributors_url": "https://api.github.com/repos/basecamp/google_sign_in/contributors",
+            "subscribers_url": "https://api.github.com/repos/basecamp/google_sign_in/subscribers",
+            "subscription_url": "https://api.github.com/repos/basecamp/google_sign_in/subscription",
+            "commits_url": "https://api.github.com/repos/basecamp/google_sign_in/commits{/sha}",
+            "git_commits_url": "https://api.github.com/repos/basecamp/google_sign_in/git/commits{/sha}",
+            "comments_url": "https://api.github.com/repos/basecamp/google_sign_in/comments{/number}",
+            "issue_comment_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/comments{/number}",
+            "contents_url": "https://api.github.com/repos/basecamp/google_sign_in/contents/{+path}",
+            "compare_url": "https://api.github.com/repos/basecamp/google_sign_in/compare/{base}...{head}",
+            "merges_url": "https://api.github.com/repos/basecamp/google_sign_in/merges",
+            "archive_url": "https://api.github.com/repos/basecamp/google_sign_in/{archive_format}{/ref}",
+            "downloads_url": "https://api.github.com/repos/basecamp/google_sign_in/downloads",
+            "issues_url": "https://api.github.com/repos/basecamp/google_sign_in/issues{/number}",
+            "pulls_url": "https://api.github.com/repos/basecamp/google_sign_in/pulls{/number}",
+            "milestones_url": "https://api.github.com/repos/basecamp/google_sign_in/milestones{/number}",
+            "notifications_url": "https://api.github.com/repos/basecamp/google_sign_in/notifications{?since,all,participating}",
+            "labels_url": "https://api.github.com/repos/basecamp/google_sign_in/labels{/name}",
+            "releases_url": "https://api.github.com/repos/basecamp/google_sign_in/releases{/id}",
+            "deployments_url": "https://api.github.com/repos/basecamp/google_sign_in/deployments",
+            "created_at": "2017-05-30T13:46:32Z",
+            "updated_at": "2017-05-31T10:07:39Z",
+            "pushed_at": "2017-05-30T17:59:31Z",
+            "git_url": "git://github.com/basecamp/google_sign_in.git",
+            "ssh_url": "git@github.com:basecamp/google_sign_in.git",
+            "clone_url": "https://github.com/basecamp/google_sign_in.git",
+            "svn_url": "https://github.com/basecamp/google_sign_in",
+            "homepage": null,
+            "size": 12,
+            "stargazers_count": 101,
+            "watchers_count": 101,
+            "language": "Ruby",
+            "has_issues": true,
+            "has_projects": true,
+            "has_downloads": true,
+            "has_wiki": true,
+            "has_pages": false,
+            "forks_count": 3,
+            "mirror_url": null,
+            "open_issues_count": 0,
+            "forks": 3,
+            "open_issues": 0,
+            "watchers": 101,
+            "default_branch": "master"
+          }
+        },
+        "_links": {
+          "self": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1"
+          },
+          "html": {
+            "href": "https://github.com/basecamp/google_sign_in/pull/1"
+          },
+          "issue": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/issues/1"
+          },
+          "comments": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/issues/1/comments"
+          },
+          "review_comments": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1/comments"
+          },
+          "review_comment": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/comments{/number}"
+          },
+          "commits": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1/commits"
+          },
+          "statuses": {
+            "href": "https://api.github.com/repos/basecamp/google_sign_in/statuses/aa6ccd94a6e3098fc49086f8507407886e5abb5d"
+          }
+        },
+        "merged": false,
+        "mergeable": true,
+        "rebaseable": true,
+        "mergeable_state": "clean",
+        "merged_by": null,
+        "comments": 1,
+        "review_comments": 0,
+        "maintainer_can_modify": false,
+        "commits": 1,
+        "additions": 23,
+        "deletions": 23,
+        "changed_files": 4
+      }
+    },
+    "public": true,
+    "created_at": "2017-05-31T10:10:15Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5973562618",
+    "type": "IssueCommentEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "action": "created",
+      "issue": {
+        "url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1",
+        "repository_url": "https://api.github.com/repos/basecamp/google_sign_in",
+        "labels_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1/labels{/name}",
+        "comments_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1/comments",
+        "events_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1/events",
+        "html_url": "https://github.com/basecamp/google_sign_in/pull/1",
+        "id": 232333269,
+        "number": 1,
+        "title": "Consistent single vs double quotes",
+        "user": {
+          "login": "mazaira",
+          "id": 6529421,
+          "avatar_url": "https://avatars2.githubusercontent.com/u/6529421?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mazaira",
+          "html_url": "https://github.com/mazaira",
+          "followers_url": "https://api.github.com/users/mazaira/followers",
+          "following_url": "https://api.github.com/users/mazaira/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mazaira/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mazaira/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mazaira/subscriptions",
+          "organizations_url": "https://api.github.com/users/mazaira/orgs",
+          "repos_url": "https://api.github.com/users/mazaira/repos",
+          "events_url": "https://api.github.com/users/mazaira/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mazaira/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "labels": [
+
+        ],
+        "state": "open",
+        "locked": false,
+        "assignee": null,
+        "assignees": [
+
+        ],
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2017-05-30T17:59:30Z",
+        "updated_at": "2017-05-31T10:10:13Z",
+        "closed_at": null,
+        "pull_request": {
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/pulls/1",
+          "html_url": "https://github.com/basecamp/google_sign_in/pull/1",
+          "diff_url": "https://github.com/basecamp/google_sign_in/pull/1.diff",
+          "patch_url": "https://github.com/basecamp/google_sign_in/pull/1.patch"
+        },
+        "body": "I saw the `require`s in the Rakefile with doubles and just autocorrect the rest. What do you think? 😄 "
+      },
+      "comment": {
+        "url": "https://api.github.com/repos/basecamp/google_sign_in/issues/comments/305146826",
+        "html_url": "https://github.com/basecamp/google_sign_in/pull/1#issuecomment-305146826",
+        "issue_url": "https://api.github.com/repos/basecamp/google_sign_in/issues/1",
+        "id": 305146826,
+        "user": {
+          "login": "dhh",
+          "id": 2741,
+          "avatar_url": "https://avatars3.githubusercontent.com/u/2741?v=3",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/dhh",
+          "html_url": "https://github.com/dhh",
+          "followers_url": "https://api.github.com/users/dhh/followers",
+          "following_url": "https://api.github.com/users/dhh/following{/other_user}",
+          "gists_url": "https://api.github.com/users/dhh/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/dhh/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/dhh/subscriptions",
+          "organizations_url": "https://api.github.com/users/dhh/orgs",
+          "repos_url": "https://api.github.com/users/dhh/repos",
+          "events_url": "https://api.github.com/users/dhh/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/dhh/received_events",
+          "type": "User",
+          "site_admin": false
+        },
+        "created_at": "2017-05-31T10:10:13Z",
+        "updated_at": "2017-05-31T10:10:13Z",
+        "body": "I'm trying out double quotes to follow the Rails linter style, so going to stick with that for now! Thanks though."
+      }
+    },
+    "public": true,
+    "created_at": "2017-05-31T10:10:13Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966499797",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1769477371,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "87046ef03e495982345207dc2996a527e92a19b1",
+      "before": "21cea0994532219bb7a0b6dd798495599d68228a",
+      "commits": [
+        {
+          "sha": "87046ef03e495982345207dc2996a527e92a19b1",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "A few more README notes",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/87046ef03e495982345207dc2996a527e92a19b1"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-30T14:08:34Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966352888",
+    "type": "CreateEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "ref": "v0.1",
+      "ref_type": "tag",
+      "master_branch": "master",
+      "description": "Sign in (or up) with Google for Rails applications",
+      "pusher_type": "user"
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:50:53Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966347699",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1769430001,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "21cea0994532219bb7a0b6dd798495599d68228a",
+      "before": "8de38fe3e346e463ed0504fcf8b6f9722b20e319",
+      "commits": [
+        {
+          "sha": "21cea0994532219bb7a0b6dd798495599d68228a",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Even more formatting",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/21cea0994532219bb7a0b6dd798495599d68228a"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:50:16Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966339957",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1769427543,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "8de38fe3e346e463ed0504fcf8b6f9722b20e319",
+      "before": "0f05bfd63d3023d7af5f25cd93b66b5973d61c9f",
+      "commits": [
+        {
+          "sha": "8de38fe3e346e463ed0504fcf8b6f9722b20e319",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "More formatting",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/8de38fe3e346e463ed0504fcf8b6f9722b20e319"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:49:17Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966330950",
+    "type": "PushEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "push_id": 1769424810,
+      "size": 1,
+      "distinct_size": 1,
+      "ref": "refs/heads/master",
+      "head": "0f05bfd63d3023d7af5f25cd93b66b5973d61c9f",
+      "before": "0afff28ba148d5d5d95c32c5f26fc33390f2d57a",
+      "commits": [
+        {
+          "sha": "0f05bfd63d3023d7af5f25cd93b66b5973d61c9f",
+          "author": {
+            "email": "david@loudthinking.com",
+            "name": "David Heinemeier Hansson"
+          },
+          "message": "Format code",
+          "distinct": true,
+          "url": "https://api.github.com/repos/basecamp/google_sign_in/commits/0f05bfd63d3023d7af5f25cd93b66b5973d61c9f"
+        }
+      ]
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:48:12Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966320481",
+    "type": "CreateEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "ref": "master",
+      "ref_type": "branch",
+      "master_branch": "master",
+      "description": "Sign in (or up) with Google for Rails applications",
+      "pusher_type": "user"
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:46:56Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  },
+  {
+    "id": "5966317355",
+    "type": "CreateEvent",
+    "actor": {
+      "id": 2741,
+      "login": "dhh",
+      "display_login": "dhh",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dhh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2741?"
+    },
+    "repo": {
+      "id": 92837461,
+      "name": "basecamp/google_sign_in",
+      "url": "https://api.github.com/repos/basecamp/google_sign_in"
+    },
+    "payload": {
+      "ref": null,
+      "ref_type": "repository",
+      "master_branch": "master",
+      "description": "Sign in (or up) with Google for Rails applications",
+      "pusher_type": "user"
+    },
+    "public": true,
+    "created_at": "2017-05-30T13:46:33Z",
+    "org": {
+      "id": 13131,
+      "login": "basecamp",
+      "gravatar_id": "",
+      "url": "https://api.github.com/orgs/basecamp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13131?"
+    }
+  }
+]

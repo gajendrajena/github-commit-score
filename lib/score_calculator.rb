@@ -7,8 +7,18 @@ class ScoreCalculator
                 "WatchEvent" => 3,
                 "CreateEvent" => 2
                 }
+
   def self.execute commits
-    scores = commits.collect{|commit| SCORE_MAP[commit.type] || 1}
-    scores.inject(0){|sum,x| sum + x }
+    score = 0
+    return score if commits.nil? || commits.empty?
+    scores = commits.collect do|commit|
+      if commit.id
+        SCORE_MAP[commit.type] || 1
+      else
+        0
+      end
+    end
+
+    score = scores.inject(0){|sum,x| sum + x }
   end
 end

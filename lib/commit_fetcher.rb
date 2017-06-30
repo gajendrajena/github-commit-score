@@ -15,7 +15,7 @@ class CommitFetcher
 
 	# fetch commits from json
 	def fetch
-		return [] if @github_username.nil? || @github_username.empty?
+		return "" if @github_username.nil? || @github_username.empty?
 
 		uri = URI("https://api.github.com/users/#{@github_username}/events/public")
 		begin
@@ -27,11 +27,13 @@ class CommitFetcher
 
 	# parse the response into commits
 	def parse
+		res_as_json = []
 		return [] if @res.empty? || @res.nil?
 		begin
-			@commits = JSON.parse(@res).collect{|commit| Commit.new(commit)}
+			res_as_json = JSON.parse(@res)
 		rescue Exception => e
 			puts e.message
 		end
+			@commits = res_as_json.collect{ |commit| Commit.new(commit) } if !res_as_json.empty?
 	end
 end
