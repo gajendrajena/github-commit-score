@@ -1,5 +1,4 @@
 require 'test/unit'
-
 require 'mocha/test_unit'
 
 class TC_CommitFetcher < Test::Unit::TestCase
@@ -9,10 +8,8 @@ class TC_CommitFetcher < Test::Unit::TestCase
     @commit_as_json = '[{"id": "5966317355","type": "CreateEvent"}]'
   end
 
-
   def test_fetch_should_return_json_string_of_commits_given_valid_github_username
     CommitFetcher.any_instance.stubs(:fetch).returns(@commit_as_json)
-
     @commit_fetcher.res = @commit_fetcher.fetch
     assert !@commit_fetcher.res.empty?
   end

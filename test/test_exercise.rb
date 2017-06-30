@@ -15,7 +15,6 @@ class TC_Exercise < Test::Unit::TestCase
 
   def test_calculate_score_should_return_score_zero_given_github_empty_username
     CommitFetcher.any_instance.stubs(:fetch).returns("")
-
     score = Exercise.calculate_score(github_username: '')
     assert( score == 0, 'score calculated to 0 for empty username')
   end
