@@ -13,6 +13,7 @@ class ScoreCalculator
     return score if commits.nil? || commits.empty?
     scores = commits.collect do|commit|
       if commit.id
+        puts "score: #{SCORE_MAP[commit.type] || 1}, id: #{commit.id}, type: #{commit.type}"
         SCORE_MAP[commit.type] || 1
       else
         0

@@ -37,3 +37,4 @@ class CommitFetcher
 			@commits = res_as_json.collect{ |commit| Commit.new(commit) } if !res_as_json.empty?
 	end
 end
+
